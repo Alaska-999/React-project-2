@@ -5,6 +5,7 @@ import './Styles/App.css'
 import PostItem from "./Components/PostItem";
 import PostList from "./Components/PostList";
 import MyButton from "./Components/UI/button/MyButton";
+import MyInput from "./Components/UI/input/MyInput";
 
 function App() {
     // const [value, setValue] = useState('Text in input')
@@ -14,12 +15,15 @@ function App() {
         {id:3, title: 'React', body: 'Description'},]
     )
 
+    const addNewPost = () => {
+
+    }
 
   return (
       <div className='App'>
           <form>
-              <input type="text" placeholder='Post name'/>
-              <input type="text" placeholder='Post description'/>
+              <MyInput type="text" placeholder='Post name'/>
+              <MyInput type="text" placeholder='Post description'/>
               <MyButton>Create post</MyButton>
           </form>
         <PostList posts={posts} title='Posts list'/>
