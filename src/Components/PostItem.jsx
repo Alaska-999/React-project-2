@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import MyButton from "./UI/button/MyButton";
 
 const PostItem = (props) => {
-    return (
+  return (
         <div>
             <div className='post'>
                 <div className='post__content'>
@@ -16,7 +16,7 @@ const PostItem = (props) => {
                 </div>
             </div>
         </div>
-    );
+  );
 };
 
 export default PostItem;
