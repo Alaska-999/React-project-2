@@ -5,13 +5,16 @@
     right: 0;
     left: 0;
     display: none;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .myModalContent {
     padding: 25px;
     background: #ffffff;
     border-radius: 16px;
-    mix-width: 250px;
+    min-width: 250px;
+    max-width: 650px;
+    width: 68%
 }
 
 .myModal.active {

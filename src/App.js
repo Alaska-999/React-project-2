@@ -49,20 +49,18 @@ function App() {
 
   return (
     <div className="App">
-      <PostForm create={createPost} />
+      <MyModal visible={true}>
+        <PostForm create={createPost} />
+      </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      {sortedAndSearchedPosts.length !== 0 ? (
-        <PostList
-          filter={filter}
-          setFilter={setFilter}
-          remove={removePost}
-          posts={sortedAndSearchedPosts}
-          title="Posts list"
-        />
-      ) : (
-        <h1 style={{ textAlign: "center" }}>Post are not found!</h1>
-      )}
+      <PostList
+        filter={filter}
+        setFilter={setFilter}
+        remove={removePost}
+        posts={sortedAndSearchedPosts}
+        title="Posts list"
+      />
     </div>
   );
 }
