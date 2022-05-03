@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useMemo, useRef, useState} from "react";
 import './Styles/App.css'
 import PostList from "./Components/PostList";
 import PostForm from "./Components/PostForm";
@@ -8,23 +8,27 @@ import MyInput from "./Components/UI/input/MyInput";
 function App() {
     // const [value, setValue] = useState('Text in input')
     const [posts, setPosts] = useState([
-        {id:1, title: 'Javascript', body: 'Description'},
-        {id:2, title: 'Html', body: 'Description'},
-        {id:3, title: 'React', body: 'Description'},]
+        {id:1, title: 'Javascript', body: ' high-level, often just-in-time compiled language that conforms to the ECMAScript standard.'},
+        {id:2, title: 'Html', body: 'HyperText Markup Language'},
+        {id:3, title: 'React', body: 'a style sheet language used for describing the presentation of a document written in a markup language.'},]
     )
     const [selectedSort, setSelectedSort] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
 
-    function getSortedPosts() {
 
-       if(selectedSort) {
-           return [...posts].sort((a, b) =>
-               a[selectedSort].localeCompare(b[selectedSort]))
-       }
-       return posts
-    }
+    const sortedPosts = useMemo(() => {
+        if(selectedSort) {
+            return [...posts].sort((a, b) =>
+                a[selectedSort].localeCompare(b[selectedSort]))
+        }
+        return posts
+    }, [selectedSort, posts])
+// колбек будет вызван в том случае если какая то из зависимостей поменяет свое значение
 
-    const sortedPosts = getSortedPosts()
+   const sortedAndSearchedPosts = useMemo(() => {
+        return sortedPosts.filter(post => post.title.toLowerCase().includes(searchQuery))
+   }, [searchQuery, sortedPosts])
+
 
     const createPost = (newPost) => {
         setPosts([...posts, newPost])
@@ -61,8 +65,8 @@ function App() {
                   ]}
               />
           </div>
-          { posts.length !==0
-          ? <PostList remove={removePost} posts={sortedPosts} title='Posts list'/>
+          { sortedAndSearchedPosts.length !==0
+          ? <PostList remove={removePost} posts={sortedAndSearchedPosts} title='Posts list'/>
           : <h1 style={{textAlign: 'center'}}>
                   Post are not found!
             </h1>
