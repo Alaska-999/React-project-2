@@ -7,6 +7,7 @@ import MyModal from "./Components/UI/modal/MyModal";
 import MyButton from "./Components/UI/button/MyButton";
 import { usePosts } from "./Components/Hooks/usePosts";
 import axios from "axios";
+import PostService from "./API/PostService";
 
 function App() {
   // const [value, setValue] = useState('Text in input')
@@ -39,10 +40,8 @@ function App() {
   };
 
   async function fetchPosts() {
-    const response = await axios.get(
-      "https://jsonplaceholder.typicode.com/posts"
-    );
-    setPosts(response.data);
+    const posts = await PostService.getAll();
+    setPosts(posts);
   }
 
   // получаем post из дочернего компонента
@@ -52,7 +51,6 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={fetchPosts}>GET POSTS</button>
       <MyButton style={{ marginTop: "30px" }} onClick={() => setModal(true)}>
         Create post
       </MyButton>
