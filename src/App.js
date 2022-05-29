@@ -9,6 +9,7 @@ import { usePosts } from "./Components/Hooks/usePosts";
 import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./Components/UI/Loader/Loader";
+import { useFetching } from "./Components/Hooks/useFetching";
 
 function App() {
   // const [value, setValue] = useState('Text in input')
@@ -28,7 +29,10 @@ function App() {
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
-  const [isPostLoading, setIsPostLoading] = useState(false);
+  const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  });
 
   useEffect(() => {
     fetchPosts();
@@ -38,15 +42,6 @@ function App() {
     setPosts([...posts, newPost]);
     setModal(false);
   };
-
-  async function fetchPosts() {
-    setIsPostLoading(true);
-    setTimeout(async () => {
-      const posts = await PostService.getAll();
-      setPosts(posts);
-      setIsPostLoading(false);
-    }, 1000);
-  }
 
   // получаем post из дочернего компонента
   const removePost = (post) => {
