@@ -58,7 +58,8 @@ function App() {
       </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-
+      //обработка ошибки
+      {postError && <h1>Error appeared {postError} </h1>}
       {isPostLoading ? (
         <div
           style={{
