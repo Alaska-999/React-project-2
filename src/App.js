@@ -8,6 +8,7 @@ import MyButton from "./Components/UI/button/MyButton";
 import { usePosts } from "./Components/Hooks/usePosts";
 import axios from "axios";
 import PostService from "./API/PostService";
+import Loader from "./Components/UI/Loader/Loader";
 
 function App() {
   // const [value, setValue] = useState('Text in input')
@@ -24,11 +25,10 @@ function App() {
       body: "a style sheet language used for describing the presentation of a document written in a markup language.",
     },
   ]);
-
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
-
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  const [isPostLoading, setIsPostLoading] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -40,8 +40,12 @@ function App() {
   };
 
   async function fetchPosts() {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    setIsPostLoading(true);
+    setTimeout(async () => {
+      const posts = await PostService.getAll();
+      setPosts(posts);
+      setIsPostLoading(false);
+    }, 1000);
   }
 
   // получаем post из дочернего компонента
@@ -59,13 +63,26 @@ function App() {
       </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      <PostList
-        filter={filter}
-        setFilter={setFilter}
-        remove={removePost}
-        posts={sortedAndSearchedPosts}
-        title="Posts list"
-      />
+
+      {isPostLoading ? (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "50px",
+          }}
+        >
+          <Loader />
+        </div>
+      ) : (
+        <PostList
+          filter={filter}
+          setFilter={setFilter}
+          remove={removePost}
+          posts={sortedAndSearchedPosts}
+          title="Posts list"
+        />
+      )}
     </div>
   );
 }
