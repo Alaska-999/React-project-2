@@ -10,6 +10,7 @@ import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./Components/UI/Loader/Loader";
 import { useFetching } from "./Components/Hooks/useFetching";
+import { getPageArray, getPageCount, getPagesArray } from "./Utils/pages";
 
 function App() {
   // const [value, setValue] = useState('Text in input')
@@ -28,15 +29,26 @@ function App() {
   ]);
   const [filter, setFilter] = useState({ sort: "", query: "" });
   const [modal, setModal] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  let pagesArray = getPagesArray(totalPages);
+  //надо использовать useMemo
+
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
+    const response = await PostService.getAll(limit, page);
+    setPosts(response.data);
+    const totalCount = response.headers["x-total-count"];
+    setTotalPages(getPageCount(totalCount, limit));
   });
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  useEffect(
+    (limit, page) => {
+      fetchPosts();
+    },
+    [page]
+  );
 
   const createPost = (newPost) => {
     setPosts([...posts, newPost]);
@@ -46,6 +58,10 @@ function App() {
   // получаем post из дочернего компонента
   const removePost = (post) => {
     setPosts(posts.filter((p) => p.id !== post.id));
+  };
+
+  const changePage = (page) => {
+    setPage(page);
   };
 
   return (
@@ -58,7 +74,7 @@ function App() {
       </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
-      //обработка ошибки
+      {/*обработка ошибки запроса на получение данных*/}
       {postError && <h1>Error appeared {postError} </h1>}
       {isPostLoading ? (
         <div
@@ -79,6 +95,17 @@ function App() {
           title="Posts list"
         />
       )}
+      <div className="page__wrapper" style={{ marginTop: "30px" }}>
+        {pagesArray.map((p) => (
+          <span
+            onClick={() => changePage(p)}
+            key={p}
+            className={page == p ? "page page__current" : "page"}
+          >
+            {p}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
