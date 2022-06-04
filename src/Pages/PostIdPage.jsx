@@ -3,18 +3,23 @@ import { useParams } from "react-router-dom";
 import { useFetching } from "../Components/Hooks/useFetching";
 import PostService from "../API/PostService";
 import Loader from "../Components/UI/Loader/Loader";
-import axios from "axios";
 
 const PostIdPage = () => {
   const params = useParams();
   const [post, setPost] = useState({});
-  const [fetchPostById, isLoading, error] = useFetching(async (id) => {
+  const [comments, setComments] = useState([]);
+  const [fetchPostById, isLoading, error] = useFetching(async () => {
     const response = await PostService.getById(params.id);
     setPost(response.data);
   });
+  // const [fetchComments, isComLoading, comError] = useFetching(async () => {
+  //   const response = await PostService.getCommentsByPostId(params.id);
+  //   setPost(response.data);
+  // });
 
   useEffect(() => {
     fetchPostById(params.id);
+    // fetchComments(params.id);
   });
 
   // useEffect(() => {
@@ -35,6 +40,15 @@ const PostIdPage = () => {
         {post.id}. {post.title}
       </div>
       {/*)}*/}
+      <h1>Comments</h1>
+      {/*<div>*/}
+      {/*  {comments.map((comm) => (*/}
+      {/*    <div style={{ marginTop: 15 }}>*/}
+      {/*      <h5>{comm.email}</h5>*/}
+      {/*      <div>{comm.body}</div>*/}
+      {/*    </div>*/}
+      {/*  ))}*/}
+      {/*</div>*/}
     </div>
   );
 };
