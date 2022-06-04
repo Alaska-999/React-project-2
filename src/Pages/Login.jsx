@@ -8,6 +8,7 @@ const Login = () => {
   const submit = (event) => {
     event.preventDefault();
     setIsAuth(true);
+    localStorage.setItem("auth", "true");
   };
   return (
     <div>
