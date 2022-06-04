@@ -1,14 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Route, Routes } from "react-router-dom";
-import About from "../Pages/About";
-import Posts from "../Pages/Posts";
-import Error from "../Pages/Error";
-import PostIdPage from "../Pages/PostIdPage";
-import Login from "../Pages/Login";
 import { privateRoutes, publicRoutes } from "../Router/router";
+import { AuthContext } from "../Context";
 
 const AppRouter = () => {
-  const isAuth = false;
+  const { isAuth } = useContext(AuthContext);
+  console.log(isAuth);
   return isAuth ? (
     <Routes>
       {privateRoutes.map((route) => (
@@ -16,6 +13,7 @@ const AppRouter = () => {
           element={route.component}
           path={route.path}
           exact={route.exact}
+          key={route.path}
         />
       ))}
     </Routes>
@@ -26,6 +24,7 @@ const AppRouter = () => {
           element={route.component}
           path={route.path}
           exact={route.exact}
+          key={route.path}
         />
       ))}
     </Routes>

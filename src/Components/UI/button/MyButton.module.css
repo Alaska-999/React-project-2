@@ -2,7 +2,7 @@
     padding: 5px 15px;
     color: teal;
     font-size: 14px;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.62);
     border: 1px solid teal;
     cursor: pointer;
 }
