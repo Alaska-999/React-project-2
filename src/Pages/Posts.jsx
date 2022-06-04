@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { usePosts } from "../Components/Hooks/usePosts";
 import { useFetching } from "../Components/Hooks/useFetching";
 import PostService from "../API/PostService";
@@ -10,6 +10,8 @@ import PostFilter from "../Components/PostFilter";
 import Loader from "../Components/UI/Loader/Loader";
 import PostList from "../Components/PostList";
 import Pagination from "../Components/UI/Pagination/Pagination";
+import { useObserver } from "../Components/Hooks/useObserver";
+import MySelect from "../Components/UI/select/MySelect";
 
 function Posts() {
   const [posts, setPosts] = useState([
@@ -31,19 +33,23 @@ function Posts() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  const lastElement = useRef();
 
   const [fetchPosts, isPostLoading, postError] = useFetching(async () => {
     const response = await PostService.getAll(limit, page);
-    setPosts(response.data);
+    setPosts([...posts, ...response.data]);
     const totalCount = response.headers["x-total-count"];
     setTotalPages(getPageCount(totalCount, limit));
+  });
+  useObserver(lastElement, page < totalPages, isPostLoading, () => {
+    setPage(page + 1);
   });
 
   useEffect(
     (limit, page) => {
-      fetchPosts();
+      fetchPosts(limit, page);
     },
-    [page]
+    [page, limit]
   );
 
   const createPost = (newPost) => {
@@ -70,9 +76,20 @@ function Posts() {
       </MyModal>
       <hr style={{ margin: "15px 0" }} />
       <PostFilter filter={filter} setFilter={setFilter} />
+      <MySelect
+        value={limit}
+        onChange={(value) => setLimit(value)}
+        defaultValue="Amount of elements"
+        options={[
+          { value: 5, name: "5" },
+          { value: 10, name: "10" },
+          { value: 25, name: "2" },
+          { value: -1, name: "Show all" },
+        ]}
+      />
       {/*обработка ошибки запроса на получение данных*/}
       {postError && <h1>Error appeared {postError} </h1>}
-      {isPostLoading ? (
+      {isPostLoading && (
         <div
           style={{
             display: "flex",
@@ -82,15 +99,17 @@ function Posts() {
         >
           <Loader />
         </div>
-      ) : (
-        <PostList
-          filter={filter}
-          setFilter={setFilter}
-          remove={removePost}
-          posts={sortedAndSearchedPosts}
-          title="Posts list"
-        />
       )}
+
+      <PostList
+        filter={filter}
+        setFilter={setFilter}
+        remove={removePost}
+        posts={sortedAndSearchedPosts}
+        title="Posts list"
+      />
+      <div ref={lastElement} style={{ height: 20, background: "red" }} />
+
       <Pagination page={page} changePage={changePage} totalPages={totalPages} />
     </div>
   );
